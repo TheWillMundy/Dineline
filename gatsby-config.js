@@ -33,7 +33,7 @@ module.exports = {
 
         // Name of the data to be downloaded.  Will show in graphQL or be saved to a file
         // using this name. i.e. posts.json
-        name: `square_catalog`,
+        name: `catalog`,
 
         // Nested level of entities in response object, example: `data.posts`
         entityLevel: ``,
@@ -42,7 +42,7 @@ module.exports = {
         // Only available from version 2.1.0
         params: {
           // per_page: 1,
-          types: "MODIFIER_LIST,ITEM,ITEM_VARIATION"
+          types: "CATEGORY,MODIFIER_LIST,ITEM,ITEM_VARIATION"
         },
 
         // Optional payload key name if your api returns your payload in a different key

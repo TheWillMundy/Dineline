@@ -1,0 +1,28 @@
+.item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background: linear-gradient(#FFF, #FFF) padding-box, radial-gradient(rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%) border-box;
+    /* background: linear-gradient(#000, #000) padding-box, radial-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%) border-box; */
+    padding-left: 5%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 10px;
+    cursor: pointer;
+	outline: none;
+}
+
+.link {
+    font-family: Quicksand;
+    text-decoration: none;
+    color: black;
+}
+
+.description {
+    font-style: italic;
+    text-transform: lowercase;
+    margin: 0;
+}
