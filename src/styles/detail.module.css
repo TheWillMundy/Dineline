@@ -1,0 +1,78 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.quantitySelector {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.value {
+    padding: 10px;
+    font-size: 3rem;
+}
+
+.button {
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    background-color: #AEC6CF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 2rem;
+    text-align: center;
+    margin: auto;
+}
+
+.button:disabled {
+    background-color: gray;
+}
+
+.confirm {
+    height: 5vh;
+    width: 50%;
+    border: none;
+    border-radius: 10px;
+    background-color: khaki;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 15px;
+
+    cursor: pointer;
+}
+
+.textbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+    padding-bottom: 20px;
+}
+
+.textbox > textarea {
+    border-radius: 10px;
+    border: 1px solid grey;
+    padding: 10px;
+}
+
+.variationSelectContainer {
+    width: 50vw;
+}
+
+.modifierSelectContainer {
+    width: 50vw;
+}
+
+.modifierSelect {
+    width: 50vw;
+}

@@ -1,8 +1,42 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import Layout from "../components/layout"
 import { graphql } from "gatsby"
 import currency from "currency.js"
 import Select from "react-select"
+import QuantitySelector from "../components/QuantitySelector"
+
+import style from "../styles/detail.module.css"
+import axios from "axios"
+
+const config = {
+  headers: {
+    "Content-Type": "application/json",
+  },
+}
+
+const updateOrder = (quantity, note, variationId, modifiers = []) => {
+  let location_id = "EPPF2N0FRVPVP"
+
+  let order_id = localStorage.getItem("order_id")
+  let version = localStorage.getItem("version")
+
+  let backendUrl = "http://localhost:3000/orders/updateOrder"
+
+  const updateOrderBody = {
+    quantity: quantity,
+    catalog_object_id: variationId,
+    note: note,
+    location_id: location_id,
+    order_id: order_id,
+    current_version: version,
+  }
+
+  axios
+    .post(backendUrl, JSON.stringify(updateOrderBody), config)
+    .then(response => {
+      return true
+    })
+}
 
 const matchModifiers = (product, modifiers) => {
   // Check if there are modifiers
@@ -69,6 +103,35 @@ const getVariations = product => {
   return product.item_data.variations
 }
 
+/**
+ * Given the option value ids selected, returns the corresponding variation
+ * @param {*} variations 
+ * @param {*} optionValueIds 
+ */
+const getCorrespondingVariation = (variations, optionValueIds) => {
+  return variations.filter(variation => {
+
+    return variation.item_variation_data.item_option_values.every(set => (
+      optionValueIds.includes(set.item_option_value_id)
+    ));
+  })[0];
+}
+
+const variationOptionSetCombo = variations => {
+  let combos = []
+
+  for (let variation of variations) {
+    // Get the option values that correspond to this variation
+    let object = { name: variation.item_variation_data.name, variationId: variation.alternative_id, options: [] }
+    for (let optionValue of variation.item_variation_data.item_option_values) {
+      object.options.push(optionValue)
+    }
+    combos.push(object);
+  }
+  
+  return combos;
+}
+
 const getVariationOptions = variations => {
   if (variations.length > 1) {
     let selectOptions = []
@@ -98,6 +161,11 @@ const getVariationOptions = variations => {
 }
 
 export default function ProductDetail({ data }) {
+  const [getQuantity, setQuantity] = useState(1)
+  const [getNote, setNote] = useState("")
+  const [getOptionValueIds, setOptionValueIds] = useState([]);
+  const [getBaseVariation, setBaseVariation] = useState(null)
+
   const product = data.squareCatalog
   const modifiersAndOptions = data.allSquareCatalog
 
@@ -112,24 +180,59 @@ export default function ProductDetail({ data }) {
 
   // Get item variations
   const variations = getVariations(product)
+
+  // Set default variation to the first one in the list
+  useEffect(() => {
+    let defaultVariation = variations[0];
+    setBaseVariation(defaultVariation)
+
+    // Initialize optionValueIds to fields on base variation
+    setOptionValueIds(defaultVariation.item_variation_data.item_option_values.map(optionValue => optionValue.item_option_value_id));
+  }, []);
+
+  useEffect(() => {
+    // Update base variation when the selected options change
+    setBaseVariation(getCorrespondingVariation(variations, getOptionValueIds));
+  }, [getOptionValueIds])
+
   const variationOptionSets = getProductOptionChoices(optionChoices, variations)
 
   // Match the retrieved modifiers with the modifiers for this product
   const matchedModifiers = matchModifiers(product, modifiers)
 
+  // When they click confirm, we'll send an update to our outstanding order
+  const handleConfirm = () => {
+    updateOrder(getQuantity, getNote, "", [])
+  }
+
   return (
     <Layout>
-      <div>
-        <h1>{product.item_data.name}</h1>
+      <div className={style.container}>
+        <h3>{product.item_data.name}</h3>
         <div
           dangerouslySetInnerHTML={{ __html: product.item_data.description }}
         />
-        {variationOptionSets.map(variationOptionSet => (
-          <>
-            <h2>{variationOptionSet.title}</h2>
-            <Select options={variationOptionSet.choices} />
-          </>
-        ))}
+        {variationOptionSets.map(variationOptionSet => {
+          let { choices } = variationOptionSet
+          
+          let selected = choices.filter(choice => getOptionValueIds.includes(choice.value))[0];
+
+          const handleChange = ({ label, value }) => {
+            // Update getOptionValueIds
+            setOptionValueIds([...getOptionValueIds.filter(elem => elem != selected.value), value]);
+          }
+
+          return (
+            <div className={style.variationSelectContainer}>
+              <h2>{variationOptionSet.title}</h2>
+              <Select
+                onChange={handleChange}
+                value={selected}
+                options={variationOptionSet.choices}
+              />
+            </div>
+          )
+        })}
         {matchedModifiers.map(modifierSet => {
           let {
             name,
@@ -142,7 +245,7 @@ export default function ProductDetail({ data }) {
                 <h2>{name}</h2>
                 {modifiers.map(modifier => {
                   return (
-                    <div>
+                    <div className={style.modifierChecks}>
                       <span>{modifier.modifier_data.name}</span>
                       <input type="checkbox" />
                     </div>
@@ -151,15 +254,34 @@ export default function ProductDetail({ data }) {
               </>
             )
           } else {
-            let choices = modifiers.map(modifier => ({ label: modifier.modifier_data.name, value: modifier.alternative_id }));
+            let choices = modifiers.map(modifier => ({
+              label: modifier.modifier_data.name,
+              value: modifier.alternative_id,
+            }))
             return (
-              <>
+              <div className={style.modifierSelectContainer}>
                 <h2>{name}</h2>
                 <Select options={choices} />
-              </>
+              </div>
             )
           }
         })}
+        <div className={style.textbox}>
+          <label>Item Notes:</label>
+          <textarea
+            value={getNote}
+            onChange={event => setNote(event.target.value)}
+            name="note"
+          />
+        </div>
+        <QuantitySelector
+          style={style}
+          value={getQuantity}
+          onChange={setQuantity}
+        />
+        <div onClick={handleConfirm} className={style.confirm}>
+          Confirm Item
+        </div>
       </div>
     </Layout>
   )
