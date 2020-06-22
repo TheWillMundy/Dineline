@@ -58,8 +58,8 @@ const OrderProgress = () => {
     return (
       <Layout>
         <SEO title="Order Progress" />
-        <Link className={styles.goBack} to="/menu">
-          {"< Check out the menu"}
+        <Link className={styles.goBack} to="/">
+          {"< Back to Home"}
         </Link>
         <h2 className={styles.noOrdersTitle}>You haven't ordered yet.</h2>
       </Layout>
@@ -80,7 +80,7 @@ const OrderProgress = () => {
   return (
     <Layout>
       <SEO title="Order Progress" />
-      <Link className={styles.goBack} to="/home">
+      <Link className={styles.goBack} to="/">
         {"< Back to Home"}
       </Link>
       <h2>You're Waiting On...</h2>

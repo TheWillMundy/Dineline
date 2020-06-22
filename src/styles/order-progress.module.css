@@ -15,12 +15,12 @@
 }
 
 .noOrdersTitle {
+    padding-top: 20px;
     text-align: center;
 }
 
 .goBack {
     align-self: flex-start;
-    padding-bottom: 10px;
     color: #d9455f;
     text-decoration: none;
     font-weight: 100;
