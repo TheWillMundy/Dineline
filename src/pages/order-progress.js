@@ -107,9 +107,6 @@ const OrderProgress = () => {
           precision: 2,
         }).format(true)}
       </div>
-      <Link className={styles.goBack} to="/">
-        Go back
-      </Link>
     </Layout>
   )
 }

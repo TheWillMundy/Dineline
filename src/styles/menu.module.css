@@ -15,11 +15,19 @@
 	outline: none;
 }
 
+.goBack {
+    align-self: flex-start;
+    color: #d9455f;
+    text-decoration: none;
+    font-weight: 100;
+}
+
 .title {
     font-family: quicksand;
     align-self: center;
     justify-self: center;
     text-align: center;
+    padding-top: 15px;
 }
 
 .link {

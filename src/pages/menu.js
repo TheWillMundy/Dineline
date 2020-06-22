@@ -76,7 +76,10 @@ const Menu = ({ data, location }) => {
     <Layout>
       <SEO title="Menu" />
       <ToastContainer />
-      <h1 className={styles.title}>Welcome to the Dineline Menu</h1>
+      <Link className={styles.goBack} to="/">
+        {"< Back to Home"}
+      </Link>
+      <h2 className={styles.title}>Zuccarelli's Menu</h2>
       {categories.map(node => {
         let filteredItems = items.filter(
           item => item.item_data.category_id === node.alternative_id
