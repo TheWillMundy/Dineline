@@ -13,7 +13,7 @@ import axios from "axios"
 const getOrder = () => {
   let location_id = "EPPF2N0FRVPVP"
 
-  let backendUrl = "http://guarded-cove-46425.herokuapp.com/orders/retrieveOrder"
+  let backendUrl = "https://guarded-cove-46425.herokuapp.com/orders/retrieveOrder"
 
   const config = {
     headers: {

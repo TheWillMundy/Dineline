@@ -21,7 +21,7 @@ const updateOrder = (quantity, note, variation, modifiers = {}) => {
   let version = localStorage.getItem("version")
   let variation_id = variation.alternative_id
 
-  let backendUrl = "http://guarded-cove-46425.herokuapp.com/orders/updateOrder"
+  let backendUrl = "https://guarded-cove-46425.herokuapp.com/orders/updateOrder"
 
   const updateOrderBody = {
     quantity: quantity,

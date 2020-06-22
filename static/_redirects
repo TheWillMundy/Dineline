@@ -1,2 +1,2 @@
 # Redirects from what the browser requests to what we serve
-/api/*             http://guarded-cove-46425.herokuapp.com/
+/api/*             https://guarded-cove-46425.herokuapp.com/
