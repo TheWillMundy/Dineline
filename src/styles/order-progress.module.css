@@ -1,0 +1,15 @@
+.goBack {
+    color: #9a1f40;
+}
+
+.items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 3rem;
+}
+
+.total {
+    font-size: large;
+    font-weight: 600;
+    padding-bottom: 20px;
+}
