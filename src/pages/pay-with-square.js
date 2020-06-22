@@ -19,7 +19,7 @@ const PayWithSquare = () => {
       <ToastContainer />
       
       <div className={styles.main}>
-      <Link className={styles.goBack} to="/home">
+      <Link className={styles.goBack} to="/">
           {"< Back to Home"}
         </Link>
         <h3 className={styles.title}>Checkout with Square.</h3>
