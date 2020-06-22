@@ -1,0 +1,27 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    font-weight: 500;
+}
+
+.purchase {
+    height: 5vh;
+    width: 25%;
+    border: none;
+    border-radius: 10px;
+    color: whitesmoke;
+    background-color: #d9455f;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 15px;
+
+    cursor: pointer;
+}

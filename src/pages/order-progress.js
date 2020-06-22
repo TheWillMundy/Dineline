@@ -5,7 +5,7 @@ import Layout from "../components/layout"
 import Image from "../components/image"
 import SEO from "../components/seo"
 
-import currency from "currency.js";
+import currency from "currency.js"
 
 import styles from "../styles/order-progress.module.css"
 import axios from "axios"
@@ -13,7 +13,8 @@ import axios from "axios"
 const getOrder = () => {
   let location_id = "EPPF2N0FRVPVP"
 
-  let backendUrl = "https://guarded-cove-46425.herokuapp.com/orders/retrieveOrder"
+  let backendUrl =
+    "https://guarded-cove-46425.herokuapp.com/orders/retrieveOrder"
 
   const config = {
     headers: {
@@ -42,11 +43,28 @@ const OrderProgress = () => {
   }, [])
 
   if (!getOrderData) {
-    return "Loading..."
+    return (
+        <Layout>
+        <SEO title="Order Progress" />
+        <h2 className={styles.noOrdersTitle}>Loading.</h2>
+      </Layout>
+    )
   }
 
   let { data } = getOrderData
   let { line_items, total_money } = data[0]
+
+  if (!line_items) {
+    return (
+      <Layout>
+        <SEO title="Order Progress" />
+        <Link className={styles.goBack} to="/menu">
+          {"< Check out the menu"}
+        </Link>
+        <h2 className={styles.noOrdersTitle}>You haven't ordered yet.</h2>
+      </Layout>
+    )
+  }
 
   let waitingOn = line_items.filter(
     line_item =>
@@ -62,6 +80,9 @@ const OrderProgress = () => {
   return (
     <Layout>
       <SEO title="Order Progress" />
+      <Link className={styles.goBack} to="/home">
+        {"< Back to Home"}
+      </Link>
       <h2>You're Waiting On...</h2>
       <div className={styles.items}>{waitingOn.map(item => item.name)}</div>
       <h3>You've Previously Received...</h3>
@@ -70,14 +91,23 @@ const OrderProgress = () => {
           <>
             <p>{item.name}</p>
             <p>{item.quantity}</p>
-            <p>{currency(item.total_money.amount / 100, { symbol: "$", precision: 2 }).format(true)}</p>
+            <p>
+              {currency(item.total_money.amount / 100, {
+                symbol: "$",
+                precision: 2,
+              }).format(true)}
+            </p>
           </>
         ))}
       </div>
       <div className={styles.total}>
-          Running Total: {currency(total_money.amount / 100, { symbol: "$", precision: 2 }).format(true)}
+        Running Total:{" "}
+        {currency(total_money.amount / 100, {
+          symbol: "$",
+          precision: 2,
+        }).format(true)}
       </div>
-      <Link className={styles.goBack} to="/home">
+      <Link className={styles.goBack} to="/">
         Go back
       </Link>
     </Layout>
