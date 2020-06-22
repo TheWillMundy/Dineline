@@ -8,6 +8,10 @@
     grid-column-gap: 3rem;
 }
 
+.waitingOnTitle {
+    padding-top: 15px;
+}
+
 .total {
     font-size: large;
     font-weight: 600;

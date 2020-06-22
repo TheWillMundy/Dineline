@@ -83,11 +83,9 @@ const OrderProgress = () => {
       <Link className={styles.goBack} to="/">
         {"< Back to Home"}
       </Link>
-      <h2>You're Waiting On...</h2>
-      <div className={styles.items}>{waitingOn.map(item => item.name)}</div>
-      <h3>You've Previously Received...</h3>
+      <h2 className={styles.waitingOnTitle}>You're Waiting On...</h2>
       <div className={styles.items}>
-        {served.map(item => (
+        {waitingOn.map(item => (
           <>
             <p>{item.name}</p>
             <p>{item.quantity}</p>
@@ -100,6 +98,8 @@ const OrderProgress = () => {
           </>
         ))}
       </div>
+      <h3>You've Previously Received...</h3>
+      <div className={styles.items}>{served.map(item => item.name)}</div>
       <div className={styles.total}>
         Running Total:{" "}
         {currency(total_money.amount / 100, {
