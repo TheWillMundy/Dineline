@@ -244,12 +244,12 @@ export default function ProductDetail({ data }) {
     <Layout>
       <div className={style.container}>
         <Link className={style.goBack} to="/menu">
-          {"< Rest of Menu"}
+          {"< Back to Menu"}
         </Link>
-        <h3>{product.item_data.name}</h3>
-        <div
-          dangerouslySetInnerHTML={{ __html: product.item_data.description }}
-        />
+        <h2 className={style.title}>{product.item_data.name}</h2>
+        <div className={style.description}>
+        { product.item_data.description && (<span style={{ fontWeight: "bold" }}>Description:</span>)} { product.item_data.description }
+        </div>
         {variationOptionSets.map(variationOptionSet => {
           let { choices } = variationOptionSet
 
@@ -286,7 +286,7 @@ export default function ProductDetail({ data }) {
           if (selection_type == "MULTIPLE") {
             return (
               <>
-                <h2>{name}</h2>
+                <h2 className={style.multipleModifierTitle}>{name}</h2>
                 {modifiers.map(modifier => {
                   let { alternative_id: modifier_alternative_id } = modifier
                   let checked =
@@ -319,9 +319,10 @@ export default function ProductDetail({ data }) {
                     })
                   }
                   return (
-                    <div className={style.modifierChecks}>
+                    <div className={style.modifierCheckContainer}>
                       <span>{modifier.modifier_data.name}</span>
                       <input
+                        className={style.modifierCheck}
                         onChange={handleChange}
                         value={modifier.alternative_id}
                         checked={checked}

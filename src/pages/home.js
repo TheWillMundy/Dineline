@@ -51,9 +51,9 @@ const Home = () => {
   const callCheck = () => toast.success("Your check will be delivered shortly.")
   return (
     <Layout>
-      <SEO title="Home of DineLine" />
+      <SEO title="Home of Dineline" />
       <ToastContainer />
-      <h1>Welcome to DineLine</h1>
+      <h2 className={styles.title}>Welcome to Zuccarelli Pizza</h2>
       <div className={styles.options}>
         <Link to="/menu">View Menu</Link>
         <Link to="/home" onClick={callHost}>
@@ -67,7 +67,6 @@ const Home = () => {
           <Link to="/pay-with-square">Pay with Square</Link>
         </div>
       </div>
-      <Link to="/">Go back to the homepage</Link>
     </Layout>
   )
 }

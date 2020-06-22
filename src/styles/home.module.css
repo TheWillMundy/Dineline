@@ -1,16 +1,49 @@
+.title {
+    font-family: quicksand;
+    text-align: center;
+}
+
 .options {
+    font-family: quicksand;
+    font-size: x-large;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
+    text-align: center;
     width: 100%;
-    padding-top: 50px;
+    padding-top: 5px;
     padding-bottom: 50px;
 }
 
+.options > * {
+    border: none;
+    border-radius: 10px;
+    background-color: #d9455f;
+    width: 75%;
+    margin: 10px;
+}
+
+.options > :link,:visited {
+    padding: 10px;
+    text-decoration: none;
+    color: whitesmoke;
+}
+
 .paymentOptions {
+    font-family: quicksand;
     display: flex;
     flex-direction: row;
     width: 100%;
     justify-content: space-evenly;
+}
+
+.paymentOptions > * {
+    width: 38%;
+}
+
+.paymentOptions > :link,:visited {
+    padding: 10px;
+    text-decoration: none;
+    color: whitesmoke;
 }

@@ -15,8 +15,15 @@
 	outline: none;
 }
 
+.title {
+    font-family: quicksand;
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+}
+
 .link {
-    font-family: Quicksand;
+    font-family: quicksand;
     text-decoration: none;
     color: black;
 }
