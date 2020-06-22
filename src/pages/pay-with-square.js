@@ -17,9 +17,13 @@ const PayWithSquare = () => {
     <Layout>
       <SEO title="Checkout with Square" />
       <ToastContainer />
+      
       <div className={styles.main}>
+      <Link className={styles.goBack} to="/home">
+          {"< Back to Home"}
+        </Link>
         <h3 className={styles.title}>Checkout with Square.</h3>
-        <p>Pay with Square using the button below. A fully contactless dine-in payment solution.</p>
+        <p>Pay with Square using the button below. <br /> A fully contactless dine-in payment solution.</p>
         <div onClick={handleCheckout} className={styles.purchase}>
         Pay With Square
         </div>

@@ -3,15 +3,24 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 
 .title {
     font-weight: 500;
 }
 
+.goBack {
+    align-self: flex-start;
+    padding-bottom: 15px;
+    color: #d9455f;
+    text-decoration: none;
+    font-weight: 100;
+}
+
 .purchase {
-    height: 5vh;
-    width: 25%;
+    height: 8vh;
+    width: 50%;
     border: none;
     border-radius: 10px;
     color: whitesmoke;
@@ -20,8 +29,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
 
-    margin: 15px;
+    margin-top: 0px;
+    margin-bottom: 25px;
 
     cursor: pointer;
 }
