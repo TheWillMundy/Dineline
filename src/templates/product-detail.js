@@ -21,7 +21,7 @@ const updateOrder = (quantity, note, variation, modifiers = {}) => {
   let version = localStorage.getItem("version")
   let variation_id = variation.alternative_id
 
-  let backendUrl = "http://localhost:3000/orders/updateOrder"
+  let backendUrl = "/api/orders/updateOrder"
 
   const updateOrderBody = {
     quantity: quantity,

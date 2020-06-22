@@ -13,7 +13,7 @@ import axios from "axios"
 const getOrder = () => {
   let location_id = "EPPF2N0FRVPVP"
 
-  let backendUrl = "http://localhost:3000/orders/retrieveOrder"
+  let backendUrl = "/api/orders/retrieveOrder"
 
   const config = {
     headers: {

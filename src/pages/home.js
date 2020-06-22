@@ -19,7 +19,7 @@ const createInitialOrder = () => {
   let dummyCustomer = "EH3VN9T5Z0YS59EJBMRJ8CGE68"
   let location_id = "EPPF2N0FRVPVP"
 
-  let backendUrl = "http://localhost:3000/orders/startOrder"
+  let backendUrl = "api/orders/startOrder"
 
   const orderRequestBody = {
     customer_id: dummyCustomer,
