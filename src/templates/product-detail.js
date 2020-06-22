@@ -19,7 +19,7 @@ const updateOrder = (quantity, note, variation, modifiers = {}) => {
 
   let order_id = localStorage.getItem("order_id")
   let version = localStorage.getItem("version")
-  let variation_id = variation.alternative_id;
+  let variation_id = variation.alternative_id
 
   let backendUrl = "http://localhost:3000/orders/updateOrder"
 
@@ -30,18 +30,18 @@ const updateOrder = (quantity, note, variation, modifiers = {}) => {
     location_id: location_id,
     order_id: order_id,
     current_version: version,
-    modifiers: Object.keys(modifiers).flatMap(key => modifiers[key]) // we only need to send the backend a list of modifier ids
+    modifiers: Object.keys(modifiers).flatMap(key => modifiers[key]), // we only need to send the backend a list of modifier ids
   }
 
   return axios
     .post(backendUrl, JSON.stringify(updateOrderBody), config)
     .then(response => {
       if (response.data.success) {
-        console.log("Bruhhh");
-        localStorage.setItem("version", response.data.version);
-        navigate("/menu", { state: { itemPurchased: true }, replace: true });
+        console.log("Bruhhh")
+        localStorage.setItem("version", response.data.version)
+        navigate("/menu", { state: { itemPurchased: true }, replace: true })
       }
-      console.log("fuckkkk");
+      console.log("fuckkkk")
     })
 }
 
@@ -212,7 +212,7 @@ export default function ProductDetail({ data }) {
     if (variations.length > 1) {
       setBaseVariation(getCorrespondingVariation(variations, getOptionValueIds))
     }
-  }, [getOptionValueIds]);
+  }, [getOptionValueIds])
 
   // Get the option sets for the variations included in this product
   const variationOptionSets = getProductOptionChoices(optionChoices, variations)
@@ -228,7 +228,8 @@ export default function ProductDetail({ data }) {
         initialModifierSettings[modifierOptionSet.alternative_id] = []
       } else {
         // Set to first value
-        initialModifierSettings[modifierOptionSet.alternative_id] = modifierOptionSet.modifier_list_data.modifiers[0].alternative_id;
+        initialModifierSettings[modifierOptionSet.alternative_id] =
+          modifierOptionSet.modifier_list_data.modifiers[0].alternative_id
       }
     }
     setModifierOptions(initialModifierSettings)
@@ -236,13 +237,15 @@ export default function ProductDetail({ data }) {
 
   // When they click confirm, we'll send an update to our outstanding order
   const handleConfirm = () => {
-    updateOrder(getQuantity, getNote, getBaseVariation, getModifierOptions);
+    updateOrder(getQuantity, getNote, getBaseVariation, getModifierOptions)
   }
 
   return (
     <Layout>
       <div className={style.container}>
-        <Link className={style.goBack} to="/menu">{"< Rest of Menu"}</Link>
+        <Link className={style.goBack} to="/menu">
+          {"< Rest of Menu"}
+        </Link>
         <h3>{product.item_data.name}</h3>
         <div
           dangerouslySetInnerHTML={{ __html: product.item_data.description }}
@@ -292,22 +295,38 @@ export default function ProductDetail({ data }) {
                     ) &&
                     getModifierOptions[modifier_set_alternative_id].includes(
                       modifier_alternative_id
-                    );
+                    )
 
-                  const handleChange = (event) => {
-                    let newOptions = getModifierOptions[modifier_set_alternative_id].slice();
-                    if (getModifierOptions[modifier_set_alternative_id].includes(event.target.value)) {
+                  const handleChange = event => {
+                    let newOptions = getModifierOptions[
+                      modifier_set_alternative_id
+                    ].slice()
+                    if (
+                      getModifierOptions[modifier_set_alternative_id].includes(
+                        event.target.value
+                      )
+                    ) {
                       // Remove since it is already in the list
-                      newOptions = newOptions.filter(elem => elem != event.target.value);
+                      newOptions = newOptions.filter(
+                        elem => elem != event.target.value
+                      )
                     } else {
-                      newOptions.push(event.target.value);
+                      newOptions.push(event.target.value)
                     }
-                    setModifierOptions({...getModifierOptions, [modifier_set_alternative_id]: newOptions });
+                    setModifierOptions({
+                      ...getModifierOptions,
+                      [modifier_set_alternative_id]: newOptions,
+                    })
                   }
                   return (
                     <div className={style.modifierChecks}>
                       <span>{modifier.modifier_data.name}</span>
-                      <input onChange={handleChange} value={modifier.alternative_id} checked={checked} type="checkbox" />
+                      <input
+                        onChange={handleChange}
+                        value={modifier.alternative_id}
+                        checked={checked}
+                        type="checkbox"
+                      />
                     </div>
                   )
                 })}
@@ -318,20 +337,28 @@ export default function ProductDetail({ data }) {
             let choices = modifiers.map(modifier => ({
               label: modifier.modifier_data.name,
               value: modifier.alternative_id,
-            }));
+            }))
 
-            let selected = choices.filter(choice => (
-              choice.value == getModifierOptions[modifier_set_alternative_id]
-            ));
+            let selected = choices.filter(
+              choice =>
+                choice.value == getModifierOptions[modifier_set_alternative_id]
+            )
 
-            const handleChange = (selected) => {
-              setModifierOptions({...getModifierOptions, [modifier_set_alternative_id]: selected.value });
+            const handleChange = selected => {
+              setModifierOptions({
+                ...getModifierOptions,
+                [modifier_set_alternative_id]: selected.value,
+              })
             }
 
             return (
               <div className={style.modifierSelectContainer}>
                 <h2>{name}</h2>
-                <Select onChange={handleChange} value={selected} options={choices} />
+                <Select
+                  onChange={handleChange}
+                  value={selected}
+                  options={choices}
+                />
               </div>
             )
           }
@@ -349,6 +376,17 @@ export default function ProductDetail({ data }) {
           value={getQuantity}
           onChange={setQuantity}
         />
+        <div className={style.price}>
+          {getBaseVariation
+            ? currency(
+                (getBaseVariation.item_variation_data.price_money.amount / 100) * getQuantity,
+                {
+                  symbol: "$",
+                  precision: 2,
+                }
+              ).format(true)
+            : null}
+        </div>
         <div onClick={handleConfirm} className={style.confirm}>
           Confirm Item
         </div>
