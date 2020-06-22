@@ -68,11 +68,11 @@ const OrderProgress = () => {
 
   let waitingOn = line_items.filter(
     line_item =>
-      line_item.metadata && line_item.metadata["status"] == "PREPARING"
+    !line_item.metadata || line_item.metadata["status"] == "PREPARING"
   )
 
   let served = line_items.filter(
-    line_item => !line_item.metadata || line_item.metadata["status"] == "SERVED"
+    line_item => line_item.metadata && line_item.metadata["status"] == "SERVED"
   )
 
   console.log(getOrderData)
