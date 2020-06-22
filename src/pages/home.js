@@ -29,7 +29,8 @@ const createInitialOrder = () => {
   axios
     .post(backendUrl, JSON.stringify(orderRequestBody), config)
     .then(response => {
-      localStorage.setItem("order_id", response.data.id)
+      localStorage.setItem("order_id", response.data.id);
+      localStorage.setItem("version", response.data.version);
     })
 }
 

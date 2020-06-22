@@ -6,6 +6,11 @@
     text-align: center;
 }
 
+.goBack {
+    align-self: flex-start;
+    padding-bottom: 10px;
+}
+
 .quantitySelector {
     display: flex;
     flex-direction: row;

@@ -1,5 +1,5 @@
-import React from "react"
-import { Link, graphql, useStaticQuery } from "gatsby"
+import React, { useEffect } from "react"
+import { Link, graphql } from "gatsby"
 
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -7,6 +7,7 @@ import SEO from "../components/seo"
 import styles from "../styles/menu.module.css"
 
 import currency from "currency.js"
+import { ToastContainer, toast } from "react-toastify"
 
 const getPrices = variations => {
   let initialPrice = variations[0].item_variation_data.price_money.amount
@@ -39,10 +40,21 @@ const getPrices = variations => {
   return `${minPrice.format(true)}`
 }
 
-const Menu = ({ data }) => {
+const Menu = ({ data, location }) => {
   let categories = []
   let modifiers = []
   let items = []
+
+  // Check to see where we are coming from
+  useEffect(() => {
+    console.log(location);
+    if (location.state && location.state.itemPurchased) {
+      toast.success("You successfully ordered an item!");
+
+      // Now clear the state
+      location.state = null;
+    }
+  }, []);
 
   data.allSquareCatalog.nodes.map(node => {
     switch (node.type) {
@@ -63,6 +75,7 @@ const Menu = ({ data }) => {
   return (
     <Layout>
       <SEO title="Menu" />
+      <ToastContainer />
       <h1>Welcome to the DineLine Menu</h1>
       {categories.map(node => {
         let filteredItems = items.filter(

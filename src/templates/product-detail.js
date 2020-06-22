@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import Layout from "../components/layout"
-import { graphql } from "gatsby"
+import { graphql, navigate, Link } from "gatsby"
 import currency from "currency.js"
 import Select from "react-select"
 import QuantitySelector from "../components/QuantitySelector"
@@ -14,27 +14,34 @@ const config = {
   },
 }
 
-const updateOrder = (quantity, note, variationId, modifiers = []) => {
+const updateOrder = (quantity, note, variation, modifiers = {}) => {
   let location_id = "EPPF2N0FRVPVP"
 
   let order_id = localStorage.getItem("order_id")
   let version = localStorage.getItem("version")
+  let variation_id = variation.alternative_id;
 
   let backendUrl = "http://localhost:3000/orders/updateOrder"
 
   const updateOrderBody = {
     quantity: quantity,
-    catalog_object_id: variationId,
+    catalog_object_id: variation_id,
     note: note,
     location_id: location_id,
     order_id: order_id,
     current_version: version,
+    modifiers: Object.keys(modifiers).flatMap(key => modifiers[key]) // we only need to send the backend a list of modifier ids
   }
 
-  axios
+  return axios
     .post(backendUrl, JSON.stringify(updateOrderBody), config)
     .then(response => {
-      return true
+      if (response.data.success) {
+        console.log("Bruhhh");
+        localStorage.setItem("version", response.data.version);
+        navigate("/menu", { state: { itemPurchased: true }, replace: true });
+      }
+      console.log("fuckkkk");
     })
 }
 
@@ -47,11 +54,11 @@ const matchModifiers = (product, modifiers) => {
     )
 
     // Match the modifier_ids to our modifier list
-    const matches = modifiers.filter(modifier =>
+    const modifierOptionSets = modifiers.filter(modifier =>
       modifierIds.includes(modifier.alternative_id)
     )
 
-    return matches
+    return modifierOptionSets
   }
 
   return []
@@ -105,16 +112,15 @@ const getVariations = product => {
 
 /**
  * Given the option value ids selected, returns the corresponding variation
- * @param {*} variations 
- * @param {*} optionValueIds 
+ * @param {*} variations
+ * @param {*} optionValueIds
  */
 const getCorrespondingVariation = (variations, optionValueIds) => {
   return variations.filter(variation => {
-
-    return variation.item_variation_data.item_option_values.every(set => (
+    return variation.item_variation_data.item_option_values.every(set =>
       optionValueIds.includes(set.item_option_value_id)
-    ));
-  })[0];
+    )
+  })[0]
 }
 
 const variationOptionSetCombo = variations => {
@@ -122,14 +128,18 @@ const variationOptionSetCombo = variations => {
 
   for (let variation of variations) {
     // Get the option values that correspond to this variation
-    let object = { name: variation.item_variation_data.name, variationId: variation.alternative_id, options: [] }
+    let object = {
+      name: variation.item_variation_data.name,
+      variationId: variation.alternative_id,
+      options: [],
+    }
     for (let optionValue of variation.item_variation_data.item_option_values) {
       object.options.push(optionValue)
     }
-    combos.push(object);
+    combos.push(object)
   }
-  
-  return combos;
+
+  return combos
 }
 
 const getVariationOptions = variations => {
@@ -163,8 +173,9 @@ const getVariationOptions = variations => {
 export default function ProductDetail({ data }) {
   const [getQuantity, setQuantity] = useState(1)
   const [getNote, setNote] = useState("")
-  const [getOptionValueIds, setOptionValueIds] = useState([]);
+  const [getOptionValueIds, setOptionValueIds] = useState([])
   const [getBaseVariation, setBaseVariation] = useState(null)
+  const [getModifierOptions, setModifierOptions] = useState({})
 
   const product = data.squareCatalog
   const modifiersAndOptions = data.allSquareCatalog
@@ -183,43 +194,72 @@ export default function ProductDetail({ data }) {
 
   // Set default variation to the first one in the list
   useEffect(() => {
-    let defaultVariation = variations[0];
+    let defaultVariation = variations[0]
     setBaseVariation(defaultVariation)
 
     // Initialize optionValueIds to fields on base variation
-    setOptionValueIds(defaultVariation.item_variation_data.item_option_values.map(optionValue => optionValue.item_option_value_id));
-  }, []);
+    if (defaultVariation.item_variation_data.item_option_values) {
+      setOptionValueIds(
+        defaultVariation.item_variation_data.item_option_values.map(
+          optionValue => optionValue.item_option_value_id
+        )
+      )
+    }
+  }, [])
 
+  // Update base variation when the selected options change
   useEffect(() => {
-    // Update base variation when the selected options change
-    setBaseVariation(getCorrespondingVariation(variations, getOptionValueIds));
-  }, [getOptionValueIds])
+    if (variations.length > 1) {
+      setBaseVariation(getCorrespondingVariation(variations, getOptionValueIds))
+    }
+  }, [getOptionValueIds]);
 
+  // Get the option sets for the variations included in this product
   const variationOptionSets = getProductOptionChoices(optionChoices, variations)
 
   // Match the retrieved modifiers with the modifiers for this product
-  const matchedModifiers = matchModifiers(product, modifiers)
+  const modifierOptionSets = matchModifiers(product, modifiers)
+
+  // Initialize modifier settings
+  useEffect(() => {
+    const initialModifierSettings = {}
+    for (let modifierOptionSet of modifierOptionSets) {
+      if (modifierOptionSet.modifier_list_data.selection_type == "MULTIPLE") {
+        initialModifierSettings[modifierOptionSet.alternative_id] = []
+      } else {
+        // Set to first value
+        initialModifierSettings[modifierOptionSet.alternative_id] = modifierOptionSet.modifier_list_data.modifiers[0].alternative_id;
+      }
+    }
+    setModifierOptions(initialModifierSettings)
+  }, [])
 
   // When they click confirm, we'll send an update to our outstanding order
   const handleConfirm = () => {
-    updateOrder(getQuantity, getNote, "", [])
+    updateOrder(getQuantity, getNote, getBaseVariation, getModifierOptions);
   }
 
   return (
     <Layout>
       <div className={style.container}>
+        <Link className={style.goBack} to="/menu">{"< Rest of Menu"}</Link>
         <h3>{product.item_data.name}</h3>
         <div
           dangerouslySetInnerHTML={{ __html: product.item_data.description }}
         />
         {variationOptionSets.map(variationOptionSet => {
           let { choices } = variationOptionSet
-          
-          let selected = choices.filter(choice => getOptionValueIds.includes(choice.value))[0];
+
+          let selected = choices.filter(choice =>
+            getOptionValueIds.includes(choice.value)
+          )[0]
 
           const handleChange = ({ label, value }) => {
             // Update getOptionValueIds
-            setOptionValueIds([...getOptionValueIds.filter(elem => elem != selected.value), value]);
+            setOptionValueIds([
+              ...getOptionValueIds.filter(elem => elem != selected.value),
+              value,
+            ])
           }
 
           return (
@@ -233,7 +273,8 @@ export default function ProductDetail({ data }) {
             </div>
           )
         })}
-        {matchedModifiers.map(modifierSet => {
+        {modifierOptionSets.map(modifierSet => {
+          let { alternative_id: modifier_set_alternative_id } = modifierSet
           let {
             name,
             selection_type,
@@ -244,24 +285,53 @@ export default function ProductDetail({ data }) {
               <>
                 <h2>{name}</h2>
                 {modifiers.map(modifier => {
+                  let { alternative_id: modifier_alternative_id } = modifier
+                  let checked =
+                    getModifierOptions.hasOwnProperty(
+                      modifier_set_alternative_id
+                    ) &&
+                    getModifierOptions[modifier_set_alternative_id].includes(
+                      modifier_alternative_id
+                    );
+
+                  const handleChange = (event) => {
+                    let newOptions = getModifierOptions[modifier_set_alternative_id].slice();
+                    if (getModifierOptions[modifier_set_alternative_id].includes(event.target.value)) {
+                      // Remove since it is already in the list
+                      newOptions = newOptions.filter(elem => elem != event.target.value);
+                    } else {
+                      newOptions.push(event.target.value);
+                    }
+                    setModifierOptions({...getModifierOptions, [modifier_set_alternative_id]: newOptions });
+                  }
                   return (
                     <div className={style.modifierChecks}>
                       <span>{modifier.modifier_data.name}</span>
-                      <input type="checkbox" />
+                      <input onChange={handleChange} value={modifier.alternative_id} checked={checked} type="checkbox" />
                     </div>
                   )
                 })}
               </>
             )
           } else {
+            // Single selection modifier
             let choices = modifiers.map(modifier => ({
               label: modifier.modifier_data.name,
               value: modifier.alternative_id,
-            }))
+            }));
+
+            let selected = choices.filter(choice => (
+              choice.value == getModifierOptions[modifier_set_alternative_id]
+            ));
+
+            const handleChange = (selected) => {
+              setModifierOptions({...getModifierOptions, [modifier_set_alternative_id]: selected.value });
+            }
+
             return (
               <div className={style.modifierSelectContainer}>
                 <h2>{name}</h2>
-                <Select options={choices} />
+                <Select onChange={handleChange} value={selected} options={choices} />
               </div>
             )
           }
