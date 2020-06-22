@@ -11,6 +11,7 @@ module.exports = {
     author: `@thewillmundy`,
   },
   plugins: [
+    'gatsby-plugin-netlify',
     {
       resolve: "gatsby-source-apiserver",
       options: {
